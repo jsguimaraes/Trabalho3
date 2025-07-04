@@ -7,6 +7,9 @@ export declare class AuthService {
         nome: string;
         email: string;
         papel: string;
+        avatar: string | null;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     login(user: any): Promise<{
         access_token: string;

@@ -1,31 +1,76 @@
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
-    criarUsuario(req: any, body: any): Promise<any>;
-    create(createUserDto: CreateUserDto): import("generated/prisma").Prisma.Prisma__UserClient<{
+    criarUsuario(req: any, body: any): Promise<{
         id: number;
+        nome: string;
         email: string;
-        name: string | null;
-        password: string;
-        avatarUrl: string | null;
-        role: string;
+        senha: string;
+        papel: string;
+        avatar: string | null;
         createdAt: Date;
-        updatedAt: Date | null;
-    }, never, import("generated/prisma/runtime/library").DefaultArgs>;
-    findAll(): import("generated/prisma").Prisma.PrismaPromise<{
-        email: string;
-        name: string | null;
+        updatedAt: Date;
+    }>;
+    criarAdministrador(req: any, body: any): Promise<{
         id: number;
-    }[]>;
-    findOne(id: string): import("generated/prisma").Prisma.Prisma__UserClient<{
+        nome: string;
         email: string;
-        name: string | null;
+        senha: string;
+        papel: string;
+        avatar: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    criarUsuarioComum(req: any, body: any): Promise<{
         id: number;
-        role: string;
-    } | null, null, import("generated/prisma/runtime/library").DefaultArgs>;
-    update(id: string, updateUserDto: UpdateUserDto): string;
-    remove(id: string): string;
+        nome: string;
+        email: string;
+        senha: string;
+        papel: string;
+        avatar: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    findAll(req: any): Promise<Partial<{
+        id: number;
+        nome: string;
+        email: string;
+        senha: string;
+        papel: string;
+        avatar: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+    }>[]>;
+    findOne(id: string, req: any): Promise<Partial<{
+        id: number;
+        nome: string;
+        email: string;
+        senha: string;
+        papel: string;
+        avatar: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+    }> | null>;
+    update(id: string, updateUserDto: UpdateUserDto, req: any): Promise<{
+        id: number;
+        nome: string;
+        email: string;
+        senha: string;
+        papel: string;
+        avatar: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    remove(id: string, req: any): Promise<{
+        id: number;
+        nome: string;
+        email: string;
+        senha: string;
+        papel: string;
+        avatar: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
 }

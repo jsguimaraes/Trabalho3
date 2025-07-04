@@ -1,20 +1,206 @@
-### Login do Superusuário
+### Teste de Login - Superusuário
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-  "email": "jaime@teste.com",
-  "senha": "123456"
+  "email": "admin@sistema.com",
+  "senha": "admin123"
 }
 
-### Criar novo usuário (autorizado)
-POST http://localhost:3000/usuarios
+### Teste de Login - Usuário Inexistente
+POST http://localhost:3000/auth/login
 Content-Type: application/json
-Authorization: Bearer SEU_TOKEN_AQUI
 
 {
-  "nome": "João Teste",
-  "email": "joao@teste.com",
-  "senha": "123456",
-  "papel": "USUARIO"
+  "email": "inexistente@exemplo.com",
+  "senha": "senha123"
 }
+
+### Criar Administrador (Superusuário)
+POST http://localhost:3000/usuarios/administrador
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "nome": "Administrador Silva",
+  "email": "admin.silva@exemplo.com",
+  "senha": "admin123"
+}
+
+### Criar Usuário Comum (Superusuário)
+POST http://localhost:3000/usuarios/usuario
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "nome": "João Usuário",
+  "email": "joao@exemplo.com",
+  "senha": "senha123"
+}
+
+### Listar Usuários (Superusuário)
+GET http://localhost:3000/usuarios
+Authorization: Bearer {{authToken}}
+
+### Buscar Usuário Específico
+GET http://localhost:3000/usuarios/2
+Authorization: Bearer {{authToken}}
+
+### Conceder Permissão - Financeiro para Usuário
+POST http://localhost:3000/permissions/conceder
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "usuarioId": 2,
+  "moduloId": 3
+}
+
+### Conceder Permissão - Relatórios para Usuário
+POST http://localhost:3000/permissions/conceder
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "usuarioId": 2,
+  "moduloId": 4
+}
+
+### Conceder Permissão - Produtos para Usuário
+POST http://localhost:3000/permissions/conceder
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "usuarioId": 2,
+  "moduloId": 5
+}
+
+### Listar Permissões de Usuário
+GET http://localhost:3000/permissions/usuario/2
+Authorization: Bearer {{authToken}}
+
+### Listar Todos os Módulos
+GET http://localhost:3000/permissions/modulos
+Authorization: Bearer {{authToken}}
+
+### Listar Usuários com Permissões
+GET http://localhost:3000/permissions/usuarios
+Authorization: Bearer {{authToken}}
+
+### Acessar Perfil (Próprio)
+GET http://localhost:3000/perfil
+Authorization: Bearer {{authToken}}
+
+### Atualizar Perfil
+PUT http://localhost:3000/perfil
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "nome": "Nome Atualizado",
+  "email": "atualizado@exemplo.com"
+}
+
+### Ver Permissões do Perfil
+GET http://localhost:3000/perfil/permissoes
+Authorization: Bearer {{authToken}}
+
+### Acessar Módulo Financeiro (Com Permissão)
+GET http://localhost:3000/financeiro
+Authorization: Bearer {{authToken}}
+
+### Criar Transação Financeira
+POST http://localhost:3000/financeiro/transacao
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "valor": 1500.00,
+  "tipo": "receita",
+  "descricao": "Venda de produtos"
+}
+
+### Relatório Financeiro
+GET http://localhost:3000/financeiro/relatorio
+Authorization: Bearer {{authToken}}
+
+### Acessar Módulo de Relatórios (Com Permissão)
+GET http://localhost:3000/relatorios
+Authorization: Bearer {{authToken}}
+
+### Gerar Relatório
+POST http://localhost:3000/relatorios/gerar
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "tipo": "vendas",
+  "periodo": "2024-01"
+}
+
+### Relatório de Vendas
+GET http://localhost:3000/relatorios/vendas
+Authorization: Bearer {{authToken}}
+
+### Acessar Módulo de Produtos (Com Permissão)
+GET http://localhost:3000/produtos
+Authorization: Bearer {{authToken}}
+
+### Criar Produto
+POST http://localhost:3000/produtos
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "nome": "Notebook Dell",
+  "preco": 3500.00,
+  "estoque": 10,
+  "categoria": "Informática"
+}
+
+### Atualizar Produto
+PUT http://localhost:3000/produtos/1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "nome": "Notebook Dell Atualizado",
+  "preco": 3800.00,
+  "estoque": 8,
+  "categoria": "Informática"
+}
+
+### Categorias de Produtos
+GET http://localhost:3000/produtos/categorias
+Authorization: Bearer {{authToken}}
+
+### Deletar Produto
+DELETE http://localhost:3000/produtos/1
+Authorization: Bearer {{authToken}}
+
+### Teste de Acesso Negado - Usuário sem Permissão
+GET http://localhost:3000/financeiro
+Authorization: Bearer {{userToken}}
+
+### Teste de Acesso Negado - Módulo de Usuários (Administrador)
+GET http://localhost:3000/usuarios
+Authorization: Bearer {{adminToken}}
+
+### Revogar Permissão
+POST http://localhost:3000/permissions/revogar
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "usuarioId": 2,
+  "moduloId": 3
+}
+
+### Deletar Usuário (Apenas Superusuário)
+DELETE http://localhost:3000/usuarios/2
+Authorization: Bearer {{authToken}}
+
+### Teste de Acesso Negado - Deletar Usuário (Administrador)
+DELETE http://localhost:3000/usuarios/3
+Authorization: Bearer {{adminToken}}

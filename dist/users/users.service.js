@@ -18,52 +18,89 @@ let UsersService = class UsersService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    create(createUserDto) {
-        return this.prisma.user.create({ data: createUserDto });
-    }
-    findAll() {
-        return this.prisma.user.findMany({
-            select: {
-                id: true,
-                name: true,
-                email: true,
-            },
-        });
-    }
-    findOne(id) {
-        return this.prisma.user.findUnique({
-            where: {
-                id: id,
-            },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                role: true,
-            },
-        });
-    }
-    findByEmail(email) {
-        return this.prisma.user.findFirst({
-            where: {
-                email: email,
-            },
-        });
-    }
-    update(id, updateUserDto) {
-        return `This action updates a #${id} user`;
-    }
-    remove(id) {
-        return `This action removes a #${id} user`;
-    }
     async criarUsuario(data) {
         const senhaCriptografada = await bcrypt.hash(data.senha, 10);
-        return this.prisma.usuario.create({
+        return await this.prisma.usuario.create({
             data: {
                 nome: data.nome,
                 email: data.email,
                 senha: senhaCriptografada,
                 papel: data.papel,
+            },
+        });
+    }
+    async findAll() {
+        return await this.prisma.usuario.findMany({
+            select: {
+                id: true,
+                nome: true,
+                email: true,
+                papel: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+        });
+    }
+    async findOne(id) {
+        return await this.prisma.usuario.findUnique({
+            where: { id },
+            select: {
+                id: true,
+                nome: true,
+                email: true,
+                papel: true,
+                avatar: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+        });
+    }
+    async findByEmail(email) {
+        return await this.prisma.usuario.findFirst({
+            where: { email },
+        });
+    }
+    async update(id, data) {
+        return await this.prisma.usuario.update({
+            where: { id },
+            data,
+        });
+    }
+    async remove(id) {
+        return await this.prisma.usuario.delete({
+            where: { id },
+        });
+    }
+    async findPermissoes(usuarioId) {
+        return await this.prisma.permissao.findMany({
+            where: {
+                usuarioId,
+                ativo: true
+            },
+            include: {
+                modulo: true
+            }
+        });
+    }
+    async criarAdministrador(data) {
+        const senhaCriptografada = await bcrypt.hash(data.senha, 10);
+        return await this.prisma.usuario.create({
+            data: {
+                nome: data.nome,
+                email: data.email,
+                senha: senhaCriptografada,
+                papel: 'administrador',
+            },
+        });
+    }
+    async criarUsuarioComum(data) {
+        const senhaCriptografada = await bcrypt.hash(data.senha, 10);
+        return await this.prisma.usuario.create({
+            data: {
+                nome: data.nome,
+                email: data.email,
+                senha: senhaCriptografada,
+                papel: 'usuario',
             },
         });
     }

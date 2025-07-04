@@ -11,16 +11,29 @@ const common_1 = require("@nestjs/common");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const users_module_1 = require("./users/users.module");
-const games_module_1 = require("./games/games.module");
 const auth_module_1 = require("./auth/auth.module");
+const permissions_module_1 = require("./permissions/permissions.module");
+const financeiro_module_1 = require("./financeiro/financeiro.module");
+const relatorios_module_1 = require("./relatorios/relatorios.module");
+const produtos_module_1 = require("./produtos/produtos.module");
+const perfil_module_1 = require("./perfil/perfil.module");
+const prisma_service_1 = require("./prisma.service");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [users_module_1.UsersModule, games_module_1.GamesModule, auth_module_1.AuthModule],
+        imports: [
+            users_module_1.UsersModule,
+            auth_module_1.AuthModule,
+            permissions_module_1.PermissionsModule,
+            financeiro_module_1.FinanceiroModule,
+            relatorios_module_1.RelatoriosModule,
+            produtos_module_1.ProdutosModule,
+            perfil_module_1.PerfilModule
+        ],
         controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
+        providers: [app_service_1.AppService, prisma_service_1.PrismaService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

@@ -31,6 +31,8 @@ export class UsersService {
         nome: true,
         email: true,
         papel: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
   }
@@ -43,6 +45,9 @@ export class UsersService {
         nome: true,
         email: true,
         papel: true,
+        avatar: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
   }
@@ -63,6 +68,50 @@ export class UsersService {
   async remove(id: number): Promise<Usuario> {
     return await this.prisma.usuario.delete({
       where: { id },
+    });
+  }
+
+  async findPermissoes(usuarioId: number) {
+    return await this.prisma.permissao.findMany({
+      where: {
+        usuarioId,
+        ativo: true
+      },
+      include: {
+        modulo: true
+      }
+    });
+  }
+
+  async criarAdministrador(data: {
+    nome: string;
+    email: string;
+    senha: string;
+  }): Promise<Usuario> {
+    const senhaCriptografada = await bcrypt.hash(data.senha, 10);
+    return await this.prisma.usuario.create({
+      data: {
+        nome: data.nome,
+        email: data.email,
+        senha: senhaCriptografada,
+        papel: 'administrador',
+      },
+    });
+  }
+
+  async criarUsuarioComum(data: {
+    nome: string;
+    email: string;
+    senha: string;
+  }): Promise<Usuario> {
+    const senhaCriptografada = await bcrypt.hash(data.senha, 10);
+    return await this.prisma.usuario.create({
+      data: {
+        nome: data.nome,
+        email: data.email,
+        senha: senhaCriptografada,
+        papel: 'usuario',
+      },
     });
   }
 }

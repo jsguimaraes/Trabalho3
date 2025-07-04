@@ -13,55 +13,116 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { RoleGuard } from 'src/guards/role.guard';
-import { Roles } from 'src/guards/role.decorator';
 import { JwtAuthGuard } from '../auth/jwt.guard';
+import { PermissionGuard } from '../guards/permission.guard';
 
-@Controller('users')
+@Controller('usuarios')
+@UseGuards(JwtAuthGuard, PermissionGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   async criarUsuario(@Request() req, @Body() body: any) {
     const solicitante = req.user;
 
-    if (solicitante.papel !== 'SUPERUSUARIO' && solicitante.papel !== 'ADMIN') {
-      throw new ForbiddenException('Apenas SUPERUSUARIO ou ADMIN pode criar usuários.');
+    // Apenas superusuário pode criar administradores
+    if (body.papel === 'administrador' && solicitante.papel !== 'superusuario') {
+      throw new ForbiddenException('Apenas superusuário pode criar administradores.');
+    }
+
+    // Superusuário e administradores podem criar usuários comuns
+    if (body.papel === 'usuario' && !['superusuario', 'administrador'].includes(solicitante.papel)) {
+      throw new ForbiddenException('Apenas superusuário e administradores podem criar usuários.');
     }
 
     return this.usersService.criarUsuario(body);
   }
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @Post('administrador')
+  async criarAdministrador(@Request() req, @Body() body: any) {
+    const solicitante = req.user;
+
+    if (solicitante.papel !== 'superusuario') {
+      throw new ForbiddenException('Apenas superusuário pode criar administradores.');
+    }
+
+    return this.usersService.criarAdministrador(body);
+  }
+
+  @Post('usuario')
+  async criarUsuarioComum(@Request() req, @Body() body: any) {
+    const solicitante = req.user;
+
+    if (!['superusuario', 'administrador'].includes(solicitante.papel)) {
+      throw new ForbiddenException('Apenas superusuário e administradores podem criar usuários.');
+    }
+
+    return this.usersService.criarUsuarioComum(body);
   }
 
   @Get()
-  @UseGuards(RoleGuard)
-  @Roles(...['admin', 'gerente', 'tecnico']) // TODO PENSAR EM ALGO COMO @RoleGuard("admin", "gerente", "tecnico")
-  @UseGuards(AuthGuard)
-  findAll() {
+  async findAll(@Request() req) {
+    const solicitante = req.user;
+
+    // Apenas superusuário e administradores podem listar usuários
+    if (!['superusuario', 'administrador'].includes(solicitante.papel)) {
+      throw new ForbiddenException('Apenas superusuário e administradores podem listar usuários.');
+    }
+
     return this.usersService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard)
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  async findOne(@Param('id') id: string, @Request() req) {
+    const solicitante = req.user;
+    const usuarioId = parseInt(id);
+
+    // Usuário pode ver seu próprio perfil
+    if (solicitante.id === usuarioId) {
+      return this.usersService.findOne(usuarioId);
+    }
+
+    // Apenas superusuário e administradores podem ver outros usuários
+    if (!['superusuario', 'administrador'].includes(solicitante.papel)) {
+      throw new ForbiddenException('Apenas superusuário e administradores podem visualizar outros usuários.');
+    }
+
+    return this.usersService.findOne(usuarioId);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Request() req) {
+    const solicitante = req.user;
+    const usuarioId = parseInt(id);
+
+    // Usuário pode atualizar seu próprio perfil
+    if (solicitante.id === usuarioId) {
+      return this.usersService.update(usuarioId, updateUserDto);
+    }
+
+    // Apenas superusuário e administradores podem atualizar outros usuários
+    if (!['superusuario', 'administrador'].includes(solicitante.papel)) {
+      throw new ForbiddenException('Apenas superusuário e administradores podem atualizar outros usuários.');
+    }
+
+    return this.usersService.update(usuarioId, updateUserDto);
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  // @RolesGuard("admin") // Verifica se o usuário é admin
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  async remove(@Param('id') id: string, @Request() req) {
+    const solicitante = req.user;
+    const usuarioId = parseInt(id);
+
+    // Usuário não pode deletar a si mesmo
+    if (solicitante.id === usuarioId) {
+      throw new ForbiddenException('Usuário não pode deletar a si mesmo.');
+    }
+
+    // Apenas superusuário pode deletar usuários
+    if (solicitante.papel !== 'superusuario') {
+      throw new ForbiddenException('Apenas superusuário pode deletar usuários.');
+    }
+
+    return this.usersService.remove(usuarioId);
   }
 }

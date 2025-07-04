@@ -12,7 +12,10 @@ model Usuario {
   nome      String
   email     String     @unique
   senha     String
-  papel     String
+  papel     String    // "superusuario", "administrador", "usuario"
+  avatar    String?   // URL da imagem do avatar
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   permissoes Permissao[]
   acessos   Acesso[]
 }
@@ -20,22 +23,31 @@ model Usuario {
 model Modulo {
   id         Int       @id @default(autoincrement())
   nome       String    @unique
+  descricao  String?
+  ativo      Boolean   @default(true)
   permissoes Permissao[]
 }
 
 model Permissao {
   id        Int      @id @default(autoincrement())
-  usuario   Usuario  @relation(fields: [usuarioId], references: [id])
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   usuarioId Int
-  modulo    Modulo   @relation(fields: [moduloId], references: [id])
+  modulo    Modulo   @relation(fields: [moduloId], references: [id], onDelete: Cascade)
   moduloId  Int
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@unique([usuarioId, moduloId])
 }
 
 model Acesso {
   id         Int      @id @default(autoincrement())
-  usuario    Usuario  @relation(fields: [usuarioId], references: [id])
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   usuarioId  Int
-  modulo     String
+  modulo     String   // Nome do módulo acessado
+  rota       String   // Rota específica acessada
   permitido  Boolean
   data       DateTime @default(now())
+  ip         String?
+  userAgent  String?
 }
