@@ -5,114 +5,114 @@ import { PrismaService } from '../prisma.service';
 export class PermissionsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async concederPermissao(usuarioId: number, moduloId: number, usuarioLogado: any) {
+  async grantPermission(userId: number, moduleId: number, loggedUser: any) {
     // Verificar se o usuário logado pode conceder permissões
-    if (!['superusuario', 'administrador'].includes(usuarioLogado.papel)) {
-      throw new ForbiddenException('Apenas superusuários e administradores podem conceder permissões');
+    if (!['superuser', 'admin'].includes(loggedUser.role)) {
+      throw new ForbiddenException('Only superusers and admins can grant permissions');
     }
 
     // Verificar se o usuário existe
-    const usuario = await this.prisma.usuario.findUnique({
-      where: { id: usuarioId }
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId }
     });
 
-    if (!usuario) {
-      throw new NotFoundException('Usuário não encontrado');
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
 
     // Verificar se o módulo existe
-    const modulo = await this.prisma.modulo.findUnique({
-      where: { id: moduloId }
+    const module = await this.prisma.module.findUnique({
+      where: { id: moduleId }
     });
 
-    if (!modulo) {
-      throw new NotFoundException('Módulo não encontrado');
+    if (!module) {
+      throw new NotFoundException('Module not found');
     }
 
     // Criar ou atualizar permissão
-    const permissao = await this.prisma.permissao.upsert({
+    const permission = await this.prisma.permission.upsert({
       where: {
-        usuarioId_moduloId: {
-          usuarioId,
-          moduloId
+        userId_moduleId: {
+          userId,
+          moduleId
         }
       },
       update: {
-        ativo: true
+        active: true
       },
       create: {
-        usuarioId,
-        moduloId,
-        ativo: true
+        userId,
+        moduleId,
+        active: true
       }
     });
 
-    return permissao;
+    return permission;
   }
 
-  async revogarPermissao(usuarioId: number, moduloId: number, usuarioLogado: any) {
+  async revokePermission(userId: number, moduleId: number, loggedUser: any) {
     // Verificar se o usuário logado pode revogar permissões
-    if (!['superusuario', 'administrador'].includes(usuarioLogado.papel)) {
-      throw new ForbiddenException('Apenas superusuários e administradores podem revogar permissões');
+    if (!['superuser', 'admin'].includes(loggedUser.role)) {
+      throw new ForbiddenException('Only superusers and admins can revoke permissions');
     }
 
-    const permissao = await this.prisma.permissao.findUnique({
+    const permission = await this.prisma.permission.findUnique({
       where: {
-        usuarioId_moduloId: {
-          usuarioId,
-          moduloId
+        userId_moduleId: {
+          userId,
+          moduleId
         }
       }
     });
 
-    if (!permissao) {
-      throw new NotFoundException('Permissão não encontrada');
+    if (!permission) {
+      throw new NotFoundException('Permission not found');
     }
 
-    await this.prisma.permissao.update({
-      where: { id: permissao.id },
-      data: { ativo: false }
+    await this.prisma.permission.update({
+      where: { id: permission.id },
+      data: { active: false }
     });
 
-    return { message: 'Permissão revogada com sucesso' };
+    return { message: 'Permission revoked successfully' };
   }
 
-  async listarPermissoesUsuario(usuarioId: number) {
-    const permissoes = await this.prisma.permissao.findMany({
+  async listUserPermissions(userId: number) {
+    const permissions = await this.prisma.permission.findMany({
       where: {
-        usuarioId,
-        ativo: true
+        userId,
+        active: true
       },
       include: {
-        modulo: true
+        module: true
       }
     });
 
-    return permissoes;
+    return permissions;
   }
 
-  async listarTodosModulos() {
-    return await this.prisma.modulo.findMany({
-      where: { ativo: true }
+  async listAllModules() {
+    return await this.prisma.module.findMany({
+      where: { active: true }
     });
   }
 
-  async listarUsuariosComPermissoes() {
-    const usuarios = await this.prisma.usuario.findMany({
+  async listUsersWithPermissions() {
+    const users = await this.prisma.user.findMany({
       select: {
         id: true,
-        nome: true,
+        name: true,
         email: true,
-        papel: true,
-        permissoes: {
-          where: { ativo: true },
+        role: true,
+        permissions: {
+          where: { active: true },
           include: {
-            modulo: true
+            module: true
           }
         }
       }
     });
 
-    return usuarios;
+    return users;
   }
 } 

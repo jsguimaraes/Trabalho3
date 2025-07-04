@@ -3,72 +3,72 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
-    criarUsuario(req: any, body: any): Promise<{
+    createUser(req: any, body: any): Promise<{
         id: number;
-        nome: string;
+        name: string;
         email: string;
-        senha: string;
-        papel: string;
+        password: string;
+        role: string;
         avatar: string | null;
         createdAt: Date;
         updatedAt: Date;
     }>;
-    criarAdministrador(req: any, body: any): Promise<{
+    createAdmin(req: any, body: any): Promise<{
         id: number;
-        nome: string;
+        name: string;
         email: string;
-        senha: string;
-        papel: string;
+        password: string;
+        role: string;
         avatar: string | null;
         createdAt: Date;
         updatedAt: Date;
     }>;
-    criarUsuarioComum(req: any, body: any): Promise<{
+    createRegularUser(req: any, body: any): Promise<{
         id: number;
-        nome: string;
+        name: string;
         email: string;
-        senha: string;
-        papel: string;
+        password: string;
+        role: string;
         avatar: string | null;
         createdAt: Date;
         updatedAt: Date;
     }>;
     findAll(req: any): Promise<Partial<{
         id: number;
-        nome: string;
+        name: string;
         email: string;
-        senha: string;
-        papel: string;
+        password: string;
+        role: string;
         avatar: string | null;
         createdAt: Date;
         updatedAt: Date;
     }>[]>;
     findOne(id: string, req: any): Promise<Partial<{
         id: number;
-        nome: string;
+        name: string;
         email: string;
-        senha: string;
-        papel: string;
+        password: string;
+        role: string;
         avatar: string | null;
         createdAt: Date;
         updatedAt: Date;
     }> | null>;
     update(id: string, updateUserDto: UpdateUserDto, req: any): Promise<{
         id: number;
-        nome: string;
+        name: string;
         email: string;
-        senha: string;
-        papel: string;
+        password: string;
+        role: string;
         avatar: string | null;
         createdAt: Date;
         updatedAt: Date;
     }>;
     remove(id: string, req: any): Promise<{
         id: number;
-        nome: string;
+        name: string;
         email: string;
-        senha: string;
-        papel: string;
+        password: string;
+        role: string;
         avatar: string | null;
         createdAt: Date;
         updatedAt: Date;

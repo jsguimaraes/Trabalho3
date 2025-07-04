@@ -18,37 +18,39 @@ let UsersService = class UsersService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async criarUsuario(data) {
-        const senhaCriptografada = await bcrypt.hash(data.senha, 10);
-        return await this.prisma.usuario.create({
+    async createUser(data) {
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+        return await this.prisma.user.create({
             data: {
-                nome: data.nome,
+                name: data.name,
                 email: data.email,
-                senha: senhaCriptografada,
-                papel: data.papel,
+                password: hashedPassword,
+                role: data.role,
+                avatar: null,
             },
         });
     }
     async findAll() {
-        return await this.prisma.usuario.findMany({
+        return await this.prisma.user.findMany({
             select: {
                 id: true,
-                nome: true,
+                name: true,
                 email: true,
-                papel: true,
+                role: true,
+                avatar: true,
                 createdAt: true,
                 updatedAt: true,
             },
         });
     }
     async findOne(id) {
-        return await this.prisma.usuario.findUnique({
+        return await this.prisma.user.findUnique({
             where: { id },
             select: {
                 id: true,
-                nome: true,
+                name: true,
                 email: true,
-                papel: true,
+                role: true,
                 avatar: true,
                 createdAt: true,
                 updatedAt: true,
@@ -56,51 +58,53 @@ let UsersService = class UsersService {
         });
     }
     async findByEmail(email) {
-        return await this.prisma.usuario.findFirst({
+        return await this.prisma.user.findFirst({
             where: { email },
         });
     }
     async update(id, data) {
-        return await this.prisma.usuario.update({
+        return await this.prisma.user.update({
             where: { id },
             data,
         });
     }
     async remove(id) {
-        return await this.prisma.usuario.delete({
+        return await this.prisma.user.delete({
             where: { id },
         });
     }
-    async findPermissoes(usuarioId) {
-        return await this.prisma.permissao.findMany({
+    async findPermissions(userId) {
+        return await this.prisma.permission.findMany({
             where: {
-                usuarioId,
-                ativo: true
+                userId,
+                active: true
             },
             include: {
-                modulo: true
+                module: true
             }
         });
     }
-    async criarAdministrador(data) {
-        const senhaCriptografada = await bcrypt.hash(data.senha, 10);
-        return await this.prisma.usuario.create({
+    async createAdmin(data) {
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+        return await this.prisma.user.create({
             data: {
-                nome: data.nome,
+                name: data.name,
                 email: data.email,
-                senha: senhaCriptografada,
-                papel: 'administrador',
+                password: hashedPassword,
+                role: 'admin',
+                avatar: null,
             },
         });
     }
-    async criarUsuarioComum(data) {
-        const senhaCriptografada = await bcrypt.hash(data.senha, 10);
-        return await this.prisma.usuario.create({
+    async createRegularUser(data) {
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+        return await this.prisma.user.create({
             data: {
-                nome: data.nome,
+                name: data.name,
                 email: data.email,
-                senha: senhaCriptografada,
-                papel: 'usuario',
+                password: hashedPassword,
+                role: 'user',
+                avatar: null,
             },
         });
     }

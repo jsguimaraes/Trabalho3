@@ -23,7 +23,7 @@ let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
     }
-    async criarUsuario(req, body) {
+    async createUser(req, body) {
         const solicitante = req.user;
         if (body.papel === 'administrador' && solicitante.papel !== 'superusuario') {
             throw new common_1.ForbiddenException('Apenas superusuário pode criar administradores.');
@@ -31,21 +31,21 @@ let UsersController = class UsersController {
         if (body.papel === 'usuario' && !['superusuario', 'administrador'].includes(solicitante.papel)) {
             throw new common_1.ForbiddenException('Apenas superusuário e administradores podem criar usuários.');
         }
-        return this.usersService.criarUsuario(body);
+        return this.usersService.createUser(body);
     }
-    async criarAdministrador(req, body) {
+    async createAdmin(req, body) {
         const solicitante = req.user;
         if (solicitante.papel !== 'superusuario') {
             throw new common_1.ForbiddenException('Apenas superusuário pode criar administradores.');
         }
-        return this.usersService.criarAdministrador(body);
+        return this.usersService.createAdmin(body);
     }
-    async criarUsuarioComum(req, body) {
+    async createRegularUser(req, body) {
         const solicitante = req.user;
         if (!['superusuario', 'administrador'].includes(solicitante.papel)) {
             throw new common_1.ForbiddenException('Apenas superusuário e administradores podem criar usuários.');
         }
-        return this.usersService.criarUsuarioComum(body);
+        return this.usersService.createRegularUser(body);
     }
     async findAll(req) {
         const solicitante = req.user;
@@ -96,23 +96,23 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], UsersController.prototype, "criarUsuario", null);
+], UsersController.prototype, "createUser", null);
 __decorate([
-    (0, common_1.Post)('administrador'),
+    (0, common_1.Post)('admin'),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], UsersController.prototype, "criarAdministrador", null);
+], UsersController.prototype, "createAdmin", null);
 __decorate([
-    (0, common_1.Post)('usuario'),
+    (0, common_1.Post)('regular'),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], UsersController.prototype, "criarUsuarioComum", null);
+], UsersController.prototype, "createRegularUser", null);
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Request)()),
@@ -146,7 +146,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "remove", null);
 exports.UsersController = UsersController = __decorate([
-    (0, common_1.Controller)('usuarios'),
+    (0, common_1.Controller)('users'),
     (0, common_1.UseGuards)(jwt_guard_1.JwtAuthGuard, permission_guard_1.PermissionGuard),
     __metadata("design:paramtypes", [users_service_1.UsersService])
 ], UsersController);

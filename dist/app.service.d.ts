@@ -4,7 +4,7 @@ export declare class AppService {
     constructor(prisma: PrismaService);
     getHello(): string;
     onModuleInit(): Promise<void>;
-    private inicializarSistema;
-    private criarSuperusuario;
-    private criarModulosFixos;
+    private initializeSystem;
+    private createSuperuser;
+    private createFixedModules;
 }

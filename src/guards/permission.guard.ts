@@ -14,102 +14,102 @@ export class PermissionGuard implements CanActivate {
     const user = request.user;
 
     if (!user) {
-      throw new ForbiddenException('Usuário não autenticado');
+      throw new ForbiddenException('User not authenticated');
     }
 
-    // Obter o módulo da rota
-    const modulo = this.getModuloFromRoute(request.route?.path || request.url);
+    // Get module from route
+    const module = this.getModuleFromRoute(request.route?.path || request.url);
     
-    if (!modulo) {
-      return true; // Se não há módulo específico, permite acesso
+    if (!module) {
+      return true; // If no specific module, allow access
     }
 
-    // Verificar se o usuário tem permissão para o módulo
-    const temPermissao = await this.verificarPermissao(user.id, modulo, user.papel);
+    // Check if user has permission for the module
+    const hasPermission = await this.checkPermission(user.id, module, user.role);
     
-    // Registrar o acesso
-    await this.registrarAcesso(user.id, modulo, request.route?.path || request.url, temPermissao, request);
+    // Register access
+    await this.registerAccess(user.id, module, request.route?.path || request.url, hasPermission, request);
 
-    if (!temPermissao) {
-      throw new ForbiddenException(`SEM PERMISSÃO PARA ACESSAR O MÓDULO ${modulo.toUpperCase()}`);
+    if (!hasPermission) {
+      throw new ForbiddenException(`NO PERMISSION TO ACCESS ${module.toUpperCase()} MODULE`);
     }
 
     return true;
   }
 
-  private getModuloFromRoute(path: string): string | null {
-    const modulos = ['usuarios', 'perfil', 'financeiro', 'relatorios', 'produtos'];
+  private getModuleFromRoute(path: string): string | null {
+    const modules = ['users', 'profile', 'financial', 'reports', 'products'];
     
-    for (const modulo of modulos) {
-      if (path.includes(`/${modulo}`)) {
-        return modulo;
+    for (const module of modules) {
+      if (path.includes(`/${module}`)) {
+        return module;
       }
     }
     
     return null;
   }
 
-  private async verificarPermissao(usuarioId: number, modulo: string, papel: string): Promise<boolean> {
-    // Superusuário tem acesso a tudo
-    if (papel === 'superusuario') {
+  private async checkPermission(userId: number, module: string, role: string): Promise<boolean> {
+    // Superuser has access to everything
+    if (role === 'superuser') {
       return true;
     }
 
-    // Administradores têm acesso a tudo exceto gestão de usuários
-    if (papel === 'administrador') {
-      if (modulo === 'usuarios') {
+    // Admins have access to everything except user management
+    if (role === 'admin') {
+      if (module === 'users') {
         return false;
       }
       return true;
     }
 
-    // Usuários comuns precisam de permissão explícita
-    if (papel === 'usuario') {
-      // Módulo de perfil é sempre acessível pelo próprio usuário
-      if (modulo === 'perfil') {
+    // Common users need explicit permission
+    if (role === 'user') {
+      // Profile module is always accessible by the user themselves
+      if (module === 'profile') {
         return true;
       }
 
-      // Verificar permissão explícita no banco
-      const permissao = await this.prisma.permissao.findFirst({
+      // Check explicit permission in database
+      const permission = await this.prisma.permission.findFirst({
         where: {
-          usuarioId,
-          modulo: {
-            nome: modulo
+          userId: userId,
+          module: {
+            name: module
           },
-          ativo: true
+          active: true
         },
         include: {
-          modulo: true
+          module: true
         }
       });
 
-      return !!permissao;
+      return !!permission;
     }
 
     return false;
   }
 
-  private async registrarAcesso(
-    usuarioId: number, 
-    modulo: string, 
-    rota: string, 
-    permitido: boolean, 
+  private async registerAccess(
+    userId: number, 
+    module: string, 
+    route: string, 
+    permitted: boolean, 
     request: any
   ): Promise<void> {
     try {
-      await this.prisma.acesso.create({
+      await this.prisma.access.create({
         data: {
-          usuarioId,
-          modulo,
-          rota,
-          permitido,
+          userId: userId,
+          module: module,
+          route: route,
+          permitted: permitted,
           ip: request.ip,
           userAgent: request.headers['user-agent'],
         }
       });
     } catch (error) {
-      console.error('Erro ao registrar acesso:', error);
+      console.error('Error registering access:', error);
     }
   }
 } 

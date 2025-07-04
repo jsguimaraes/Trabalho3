@@ -13,10 +13,10 @@ const app_service_1 = require("./app.service");
 const users_module_1 = require("./users/users.module");
 const auth_module_1 = require("./auth/auth.module");
 const permissions_module_1 = require("./permissions/permissions.module");
-const financeiro_module_1 = require("./financeiro/financeiro.module");
-const relatorios_module_1 = require("./relatorios/relatorios.module");
-const produtos_module_1 = require("./produtos/produtos.module");
-const perfil_module_1 = require("./perfil/perfil.module");
+const financial_module_1 = require("./financial/financial.module");
+const reports_module_1 = require("./reports/reports.module");
+const products_module_1 = require("./products/products.module");
+const profile_module_1 = require("./profile/profile.module");
 const prisma_service_1 = require("./prisma.service");
 let AppModule = class AppModule {
 };
@@ -27,10 +27,10 @@ exports.AppModule = AppModule = __decorate([
             users_module_1.UsersModule,
             auth_module_1.AuthModule,
             permissions_module_1.PermissionsModule,
-            financeiro_module_1.FinanceiroModule,
-            relatorios_module_1.RelatoriosModule,
-            produtos_module_1.ProdutosModule,
-            perfil_module_1.PerfilModule
+            financial_module_1.FinancialModule,
+            reports_module_1.ReportsModule,
+            products_module_1.ProductsModule,
+            profile_module_1.ProfileModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService, prisma_service_1.PrismaService],

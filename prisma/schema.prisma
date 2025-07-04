@@ -7,47 +7,47 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Usuario {
-  id        Int       @id @default(autoincrement())
-  nome      String
+model User {
+  id        Int        @id @default(autoincrement())
+  name      String
   email     String     @unique
-  senha     String
-  papel     String    // "superusuario", "administrador", "usuario"
-  avatar    String?   // URL da imagem do avatar
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  permissoes Permissao[]
-  acessos   Acesso[]
+  password  String
+  role      String     // "superuser", "admin", "user"
+  avatar    String?    // Avatar image URL
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  permissions Permission[]
+  accesses   Access[]
 }
 
-model Modulo {
-  id         Int       @id @default(autoincrement())
-  nome       String    @unique
-  descricao  String?
-  ativo      Boolean   @default(true)
-  permissoes Permissao[]
+model Module {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  description String?
+  active      Boolean      @default(true)
+  permissions Permission[]
 }
 
-model Permissao {
+model Permission {
   id        Int      @id @default(autoincrement())
-  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-  usuarioId Int
-  modulo    Modulo   @relation(fields: [moduloId], references: [id], onDelete: Cascade)
-  moduloId  Int
-  ativo     Boolean  @default(true)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  module    Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  moduleId  Int
+  active    Boolean  @default(true)
   createdAt DateTime @default(now())
 
-  @@unique([usuarioId, moduloId])
+  @@unique([userId, moduleId])
 }
 
-model Acesso {
+model Access {
   id         Int      @id @default(autoincrement())
-  usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-  usuarioId  Int
-  modulo     String   // Nome do módulo acessado
-  rota       String   // Rota específica acessada
-  permitido  Boolean
-  data       DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int
+  module     String   // Accessed module name
+  route      String   // Accessed route
+  permitted  Boolean
+  date       DateTime @default(now())
   ip         String?
   userAgent  String?
 }

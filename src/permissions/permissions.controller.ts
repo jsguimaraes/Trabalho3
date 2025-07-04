@@ -7,42 +7,42 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 export class PermissionsController {
   constructor(private readonly permissionsService: PermissionsService) {}
 
-  @Post('conceder')
-  async concederPermissao(
-    @Body() data: { usuarioId: number; moduloId: number },
+  @Post('grant')
+  async grantPermission(
+    @Body() body: any,
     @Request() req
   ) {
-    return await this.permissionsService.concederPermissao(
-      data.usuarioId,
-      data.moduloId,
+    return await this.permissionsService.grantPermission(
+      body.userId,
+      body.moduleId,
       req.user
     );
   }
 
-  @Post('revogar')
-  async revogarPermissao(
-    @Body() data: { usuarioId: number; moduloId: number },
+  @Post('revoke')
+  async revokePermission(
+    @Body() body: any,
     @Request() req
   ) {
-    return await this.permissionsService.revogarPermissao(
-      data.usuarioId,
-      data.moduloId,
+    return await this.permissionsService.revokePermission(
+      body.userId,
+      body.moduleId,
       req.user
     );
   }
 
-  @Get('usuario/:id')
-  async listarPermissoesUsuario(@Param('id') id: string) {
-    return await this.permissionsService.listarPermissoesUsuario(parseInt(id));
+  @Get('user/:id')
+  async listUserPermissions(@Param('id') id: string) {
+    return await this.permissionsService.listUserPermissions(parseInt(id));
   }
 
-  @Get('modulos')
-  async listarTodosModulos() {
-    return await this.permissionsService.listarTodosModulos();
+  @Get('modules')
+  async listAllModules() {
+    return await this.permissionsService.listAllModules();
   }
 
-  @Get('usuarios')
-  async listarUsuariosComPermissoes() {
-    return await this.permissionsService.listarUsuariosComPermissoes();
+  @Get('users')
+  async listUsersWithPermissions() {
+    return await this.permissionsService.listUsersWithPermissions();
   }
 } 

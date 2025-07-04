@@ -23,13 +23,14 @@ exports.AuthModule = AuthModule = __decorate([
         imports: [
             passport_1.PassportModule,
             jwt_1.JwtModule.register({
-                secret: 'segredo123',
-                signOptions: { expiresIn: '1d' },
+                secret: 'your-secret-key',
+                signOptions: { expiresIn: '1h' },
             }),
             users_module_1.UsersModule,
         ],
         controllers: [auth_controller_1.AuthController],
         providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy, prisma_service_1.PrismaService],
+        exports: [auth_service_1.AuthService],
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map

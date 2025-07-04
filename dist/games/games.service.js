@@ -18,11 +18,10 @@ let GamesService = class GamesService {
         this.prisma = prisma;
     }
     create(createGameDto) {
-        createGameDto.releaseDate = new Date(createGameDto.releaseDate);
-        return this.prisma.game.create({ data: createGameDto });
+        return { message: 'Game creation not implemented yet' };
     }
     findAll() {
-        return this.prisma.game.findMany();
+        return { message: 'Game listing not implemented yet' };
     }
     findOne(id) {
         return `This action returns a #${id} game`;

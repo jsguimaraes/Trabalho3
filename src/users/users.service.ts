@@ -1,50 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { Usuario } from '@prisma/client';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async criarUsuario(data: {
-    nome: string;
+  async createUser(data: {
+    name: string;
     email: string;
-    senha: string;
-    papel: string;
-  }): Promise<Usuario> {
-    const senhaCriptografada = await bcrypt.hash(data.senha, 10);
-    return await this.prisma.usuario.create({
+    password: string;
+    role: string;
+  }): Promise<User> {
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    return await this.prisma.user.create({
       data: {
-        nome: data.nome,
+        name: data.name,
         email: data.email,
-        senha: senhaCriptografada,
-        papel: data.papel,
+        password: hashedPassword,
+        role: data.role,
+        avatar: null,
       },
     });
   }
 
-  async findAll(): Promise<Partial<Usuario>[]> {
-    return await this.prisma.usuario.findMany({
+  async findAll(): Promise<Partial<User>[]> {
+    return await this.prisma.user.findMany({
       select: {
         id: true,
-        nome: true,
+        name: true,
         email: true,
-        papel: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-  }
-
-  async findOne(id: number): Promise<Partial<Usuario> | null> {
-    return await this.prisma.usuario.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        nome: true,
-        email: true,
-        papel: true,
+        role: true,
         avatar: true,
         createdAt: true,
         updatedAt: true,
@@ -52,65 +39,82 @@ export class UsersService {
     });
   }
 
-  async findByEmail(email: string): Promise<Usuario | null> {
-    return await this.prisma.usuario.findFirst({
+  async findOne(id: number): Promise<Partial<User> | null> {
+    return await this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        avatar: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return await this.prisma.user.findFirst({
       where: { email },
     });
   }
 
-  async update(id: number, data: Partial<Usuario>): Promise<Usuario> {
-    return await this.prisma.usuario.update({
+  async update(id: number, data: Partial<User>): Promise<User> {
+    return await this.prisma.user.update({
       where: { id },
       data,
     });
   }
 
-  async remove(id: number): Promise<Usuario> {
-    return await this.prisma.usuario.delete({
+  async remove(id: number): Promise<User> {
+    return await this.prisma.user.delete({
       where: { id },
     });
   }
 
-  async findPermissoes(usuarioId: number) {
-    return await this.prisma.permissao.findMany({
+  async findPermissions(userId: number) {
+    return await this.prisma.permission.findMany({
       where: {
-        usuarioId,
-        ativo: true
+        userId,
+        active: true
       },
       include: {
-        modulo: true
+        module: true
       }
     });
   }
 
-  async criarAdministrador(data: {
-    nome: string;
+  async createAdmin(data: {
+    name: string;
     email: string;
-    senha: string;
-  }): Promise<Usuario> {
-    const senhaCriptografada = await bcrypt.hash(data.senha, 10);
-    return await this.prisma.usuario.create({
+    password: string;
+  }): Promise<User> {
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    return await this.prisma.user.create({
       data: {
-        nome: data.nome,
+        name: data.name,
         email: data.email,
-        senha: senhaCriptografada,
-        papel: 'administrador',
+        password: hashedPassword,
+        role: 'admin',
+        avatar: null,
       },
     });
   }
 
-  async criarUsuarioComum(data: {
-    nome: string;
+  async createRegularUser(data: {
+    name: string;
     email: string;
-    senha: string;
-  }): Promise<Usuario> {
-    const senhaCriptografada = await bcrypt.hash(data.senha, 10);
-    return await this.prisma.usuario.create({
+    password: string;
+  }): Promise<User> {
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    return await this.prisma.user.create({
       data: {
-        nome: data.nome,
+        name: data.name,
         email: data.email,
-        senha: senhaCriptografada,
-        papel: 'usuario',
+        password: hashedPassword,
+        role: 'user',
+        avatar: null,
       },
     });
   }

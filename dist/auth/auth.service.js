@@ -12,32 +12,40 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
+const prisma_service_1 = require("../prisma.service");
 const bcrypt = require("bcrypt");
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
 let AuthService = class AuthService {
+    prisma;
     jwtService;
-    constructor(jwtService) {
+    constructor(prisma, jwtService) {
+        this.prisma = prisma;
         this.jwtService = jwtService;
     }
-    async validateUser(email, senha) {
-        const user = await prisma.usuario.findUnique({ where: { email } });
-        if (user && await bcrypt.compare(senha, user.senha)) {
-            const { senha, ...result } = user;
+    async validateUser(email, password) {
+        const user = await this.prisma.user.findUnique({ where: { email } });
+        if (user && await bcrypt.compare(password, user.password)) {
+            const { password, ...result } = user;
             return result;
         }
-        throw new common_1.UnauthorizedException('Credenciais inválidas');
+        return null;
     }
     async login(user) {
-        const payload = { sub: user.id, email: user.email, papel: user.papel };
+        const payload = { email: user.email, sub: user.id, role: user.role };
         return {
             access_token: this.jwtService.sign(payload),
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
         };
     }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [jwt_1.JwtService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        jwt_1.JwtService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

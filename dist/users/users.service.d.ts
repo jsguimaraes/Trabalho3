@@ -1,28 +1,41 @@
 import { PrismaService } from 'src/prisma.service';
-import { Usuario } from '@prisma/client';
+import { User } from '@prisma/client';
 export declare class UsersService {
     private readonly prisma;
     constructor(prisma: PrismaService);
-    criarUsuario(data: {
-        nome: string;
+    createUser(data: {
+        name: string;
         email: string;
-        senha: string;
-        papel: string;
-    }): Promise<Usuario>;
-    findAll(): Promise<Partial<Usuario>[]>;
-    findOne(id: number): Promise<Partial<Usuario> | null>;
-    findByEmail(email: string): Promise<Usuario | null>;
-    update(id: number, data: Partial<Usuario>): Promise<Usuario>;
-    remove(id: number): Promise<Usuario>;
-    findPermissoes(usuarioId: number): Promise<any>;
-    criarAdministrador(data: {
-        nome: string;
+        password: string;
+        role: string;
+    }): Promise<User>;
+    findAll(): Promise<Partial<User>[]>;
+    findOne(id: number): Promise<Partial<User> | null>;
+    findByEmail(email: string): Promise<User | null>;
+    update(id: number, data: Partial<User>): Promise<User>;
+    remove(id: number): Promise<User>;
+    findPermissions(userId: number): Promise<({
+        module: {
+            id: number;
+            name: string;
+            description: string | null;
+            active: boolean;
+        };
+    } & {
+        id: number;
+        userId: number;
+        moduleId: number;
+        active: boolean;
+        createdAt: Date;
+    })[]>;
+    createAdmin(data: {
+        name: string;
         email: string;
-        senha: string;
-    }): Promise<Usuario>;
-    criarUsuarioComum(data: {
-        nome: string;
+        password: string;
+    }): Promise<User>;
+    createRegularUser(data: {
+        name: string;
         email: string;
-        senha: string;
-    }): Promise<Usuario>;
+        password: string;
+    }): Promise<User>;
 }

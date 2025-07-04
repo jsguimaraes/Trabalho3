@@ -11,12 +11,13 @@ import { PrismaService } from '../prisma.service';
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: 'segredo123', // depois coloque no .env
-      signOptions: { expiresIn: '1d' },
+      secret: 'your-secret-key',
+      signOptions: { expiresIn: '1h' },
     }),
     UsersModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, PrismaService],
+  exports: [AuthService],
 })
 export class AuthModule {}

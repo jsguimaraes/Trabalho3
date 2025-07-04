@@ -16,13 +16,13 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { PermissionGuard } from '../guards/permission.guard';
 
-@Controller('usuarios')
+@Controller('users')
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  async criarUsuario(@Request() req, @Body() body: any) {
+  async createUser(@Request() req, @Body() body: any) {
     const solicitante = req.user;
 
     // Apenas superusuário pode criar administradores
@@ -35,29 +35,29 @@ export class UsersController {
       throw new ForbiddenException('Apenas superusuário e administradores podem criar usuários.');
     }
 
-    return this.usersService.criarUsuario(body);
+    return this.usersService.createUser(body);
   }
 
-  @Post('administrador')
-  async criarAdministrador(@Request() req, @Body() body: any) {
+  @Post('admin')
+  async createAdmin(@Request() req, @Body() body: any) {
     const solicitante = req.user;
 
     if (solicitante.papel !== 'superusuario') {
       throw new ForbiddenException('Apenas superusuário pode criar administradores.');
     }
 
-    return this.usersService.criarAdministrador(body);
+    return this.usersService.createAdmin(body);
   }
 
-  @Post('usuario')
-  async criarUsuarioComum(@Request() req, @Body() body: any) {
+  @Post('regular')
+  async createRegularUser(@Request() req, @Body() body: any) {
     const solicitante = req.user;
 
     if (!['superusuario', 'administrador'].includes(solicitante.papel)) {
       throw new ForbiddenException('Apenas superusuário e administradores podem criar usuários.');
     }
 
-    return this.usersService.criarUsuarioComum(body);
+    return this.usersService.createRegularUser(body);
   }
 
   @Get()

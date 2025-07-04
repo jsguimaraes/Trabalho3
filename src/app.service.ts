@@ -7,61 +7,55 @@ export class AppService {
   constructor(private readonly prisma: PrismaService) {}
 
   getHello(): string {
-    return 'Sistema de Controle de Acesso - API Funcionando!';
+    return 'Access Control System - API Running!';
   }
 
   async onModuleInit() {
-    await this.inicializarSistema();
+    await this.initializeSystem();
   }
 
-  private async inicializarSistema() {
-    // Criar superusuário se não existir
-    await this.criarSuperusuario();
-    
-    // Criar módulos fixos se não existirem
-    await this.criarModulosFixos();
+  private async initializeSystem() {
+    // Create superuser if not exists
+    await this.createSuperuser();
+    // Create fixed modules if not exists
+    await this.createFixedModules();
   }
 
-  private async criarSuperusuario() {
-    const superusuarioExistente = await this.prisma.usuario.findFirst({
-      where: { papel: 'superusuario' }
+  private async createSuperuser() {
+    const superuserExists = await this.prisma.user.findFirst({
+      where: { role: 'superuser' }
     });
-
-    if (!superusuarioExistente) {
-      const senhaCriptografada = await bcrypt.hash('admin123', 10);
-      
-      await this.prisma.usuario.create({
+    if (!superuserExists) {
+      const hashedPassword = await bcrypt.hash('admin123', 10);
+      await this.prisma.user.create({
         data: {
-          nome: 'Super Administrador',
+          name: 'Super Admin',
           email: 'admin@sistema.com',
-          senha: senhaCriptografada,
-          papel: 'superusuario',
+          password: hashedPassword,
+          role: 'superuser',
         }
       });
-
-      console.log('✅ Superusuário criado: admin@sistema.com / admin123');
+      console.log('✅ Superuser created: admin@sistema.com / admin123');
     }
   }
 
-  private async criarModulosFixos() {
-    const modulosFixos = [
-      { nome: 'usuarios', descricao: 'Gestão de Usuários' },
-      { nome: 'perfil', descricao: 'Módulo de Perfil' },
-      { nome: 'financeiro', descricao: 'Módulo Financeiro' },
-      { nome: 'relatorios', descricao: 'Módulo de Relatórios' },
-      { nome: 'produtos', descricao: 'Módulo de Produtos' },
+  private async createFixedModules() {
+    const fixedModules = [
+      { name: 'users', description: 'User Management' },
+      { name: 'profile', description: 'Profile Module' },
+      { name: 'financial', description: 'Financial Module' },
+      { name: 'reports', description: 'Reports Module' },
+      { name: 'products', description: 'Products Module' },
     ];
-
-    for (const modulo of modulosFixos) {
-      const moduloExistente = await this.prisma.modulo.findUnique({
-        where: { nome: modulo.nome }
+    for (const module of fixedModules) {
+      const moduleExists = await this.prisma.module.findUnique({
+        where: { name: module.name }
       });
-
-      if (!moduloExistente) {
-        await this.prisma.modulo.create({
-          data: modulo
+      if (!moduleExists) {
+        await this.prisma.module.create({
+          data: module
         });
-        console.log(`✅ Módulo criado: ${modulo.nome}`);
+        console.log(`✅ Module created: ${module.name}`);
       }
     }
   }

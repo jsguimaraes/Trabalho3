@@ -1,118 +1,107 @@
-### Teste de Login - Superusuário
-POST http://localhost:3000/auth/login
+### NestJS Access Control System - HTTP Tests
+
+# Base URL
+@baseUrl = http://localhost:3000
+
+# Token variables (replace with actual tokens after login)
+@superuserToken = your_superuser_token_here
+@adminToken = your_admin_token_here
+@userToken = your_user_token_here
+
+### 1. AUTHENTICATION TESTS
+
+# Login as Superuser
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "admin@sistema.com",
+  "email": "admin@example.com",
   "senha": "admin123"
 }
 
-### Teste de Login - Usuário Inexistente
-POST http://localhost:3000/auth/login
+###
+
+# Login as Administrator
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "inexistente@exemplo.com",
-  "senha": "senha123"
+  "email": "gerente@example.com",
+  "senha": "gerente123"
 }
 
-### Criar Administrador (Superusuário)
-POST http://localhost:3000/usuarios/administrador
-Authorization: Bearer {{authToken}}
+###
+
+# Login as Common User
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "nome": "Administrador Silva",
-  "email": "admin.silva@exemplo.com",
-  "senha": "admin123"
+  "email": "usuario@example.com",
+  "senha": "usuario123"
 }
 
-### Criar Usuário Comum (Superusuário)
-POST http://localhost:3000/usuarios/usuario
-Authorization: Bearer {{authToken}}
+###
+
+### 2. USER MANAGEMENT TESTS (Superuser only)
+
+# Get all users
+GET {{baseUrl}}/users
+Authorization: Bearer {{superuserToken}}
+
+###
+
+# Create new user
+POST {{baseUrl}}/users
+Authorization: Bearer {{superuserToken}}
 Content-Type: application/json
 
 {
-  "nome": "João Usuário",
-  "email": "joao@exemplo.com",
-  "senha": "senha123"
+  "nome": "New User",
+  "email": "newuser@example.com",
+  "senha": "newpass123",
+  "papel": "usuario"
 }
 
-### Listar Usuários (Superusuário)
-GET http://localhost:3000/usuarios
-Authorization: Bearer {{authToken}}
+###
 
-### Buscar Usuário Específico
-GET http://localhost:3000/usuarios/2
-Authorization: Bearer {{authToken}}
+### 3. PROFILE MODULE TESTS
 
-### Conceder Permissão - Financeiro para Usuário
-POST http://localhost:3000/permissions/conceder
-Authorization: Bearer {{authToken}}
+# Get user profile
+GET {{baseUrl}}/profile
+Authorization: Bearer {{userToken}}
+
+###
+
+# Update profile
+PUT {{baseUrl}}/profile
+Authorization: Bearer {{userToken}}
 Content-Type: application/json
 
 {
-  "usuarioId": 2,
-  "moduloId": 3
+  "nome": "Updated Name",
+  "email": "updated@example.com"
 }
 
-### Conceder Permissão - Relatórios para Usuário
-POST http://localhost:3000/permissions/conceder
-Authorization: Bearer {{authToken}}
-Content-Type: application/json
+###
 
-{
-  "usuarioId": 2,
-  "moduloId": 4
-}
+# Get profile permissions
+GET {{baseUrl}}/profile/permissions
+Authorization: Bearer {{userToken}}
 
-### Conceder Permissão - Produtos para Usuário
-POST http://localhost:3000/permissions/conceder
-Authorization: Bearer {{authToken}}
-Content-Type: application/json
+###
 
-{
-  "usuarioId": 2,
-  "moduloId": 5
-}
+### 4. FINANCIAL MODULE TESTS
 
-### Listar Permissões de Usuário
-GET http://localhost:3000/permissions/usuario/2
-Authorization: Bearer {{authToken}}
+# Get financial data
+GET {{baseUrl}}/financial
+Authorization: Bearer {{adminToken}}
 
-### Listar Todos os Módulos
-GET http://localhost:3000/permissions/modulos
-Authorization: Bearer {{authToken}}
+###
 
-### Listar Usuários com Permissões
-GET http://localhost:3000/permissions/usuarios
-Authorization: Bearer {{authToken}}
-
-### Acessar Perfil (Próprio)
-GET http://localhost:3000/perfil
-Authorization: Bearer {{authToken}}
-
-### Atualizar Perfil
-PUT http://localhost:3000/perfil
-Authorization: Bearer {{authToken}}
-Content-Type: application/json
-
-{
-  "nome": "Nome Atualizado",
-  "email": "atualizado@exemplo.com"
-}
-
-### Ver Permissões do Perfil
-GET http://localhost:3000/perfil/permissoes
-Authorization: Bearer {{authToken}}
-
-### Acessar Módulo Financeiro (Com Permissão)
-GET http://localhost:3000/financeiro
-Authorization: Bearer {{authToken}}
-
-### Criar Transação Financeira
-POST http://localhost:3000/financeiro/transacao
-Authorization: Bearer {{authToken}}
+# Create transaction
+POST {{baseUrl}}/financial/transaction
+Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
@@ -121,86 +110,224 @@ Content-Type: application/json
   "descricao": "Venda de produtos"
 }
 
-### Relatório Financeiro
-GET http://localhost:3000/financeiro/relatorio
-Authorization: Bearer {{authToken}}
+###
 
-### Acessar Módulo de Relatórios (Com Permissão)
-GET http://localhost:3000/relatorios
-Authorization: Bearer {{authToken}}
+# Get financial report
+GET {{baseUrl}}/financial/report
+Authorization: Bearer {{adminToken}}
 
-### Gerar Relatório
-POST http://localhost:3000/relatorios/gerar
-Authorization: Bearer {{authToken}}
+###
+
+### 5. REPORTS MODULE TESTS
+
+# Get all reports
+GET {{baseUrl}}/reports
+Authorization: Bearer {{adminToken}}
+
+###
+
+# Generate new report
+POST {{baseUrl}}/reports/generate
+Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
   "tipo": "vendas",
-  "periodo": "2024-01"
+  "periodo": "janeiro-2024"
 }
 
-### Relatório de Vendas
-GET http://localhost:3000/relatorios/vendas
-Authorization: Bearer {{authToken}}
+###
 
-### Acessar Módulo de Produtos (Com Permissão)
-GET http://localhost:3000/produtos
-Authorization: Bearer {{authToken}}
+# Get sales report
+GET {{baseUrl}}/reports/sales
+Authorization: Bearer {{adminToken}}
 
-### Criar Produto
-POST http://localhost:3000/produtos
-Authorization: Bearer {{authToken}}
+###
+
+### 6. PRODUCTS MODULE TESTS
+
+# Get all products
+GET {{baseUrl}}/products
+Authorization: Bearer {{adminToken}}
+
+###
+
+# Create new product
+POST {{baseUrl}}/products
+Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-  "nome": "Notebook Dell",
-  "preco": 3500.00,
-  "estoque": 10,
-  "categoria": "Informática"
+  "nome": "New Product",
+  "preco": 299.99,
+  "estoque": 100,
+  "categoria": "Electronics"
 }
 
-### Atualizar Produto
-PUT http://localhost:3000/produtos/1
-Authorization: Bearer {{authToken}}
+###
+
+# Update product
+PUT {{baseUrl}}/products/1
+Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-  "nome": "Notebook Dell Atualizado",
-  "preco": 3800.00,
-  "estoque": 8,
-  "categoria": "Informática"
+  "nome": "Updated Product",
+  "preco": 399.99,
+  "estoque": 75,
+  "categoria": "Electronics"
 }
 
-### Categorias de Produtos
-GET http://localhost:3000/produtos/categorias
-Authorization: Bearer {{authToken}}
+###
 
-### Deletar Produto
-DELETE http://localhost:3000/produtos/1
-Authorization: Bearer {{authToken}}
+# Delete product
+DELETE {{baseUrl}}/products/1
+Authorization: Bearer {{adminToken}}
 
-### Teste de Acesso Negado - Usuário sem Permissão
-GET http://localhost:3000/financeiro
+###
+
+# Get product categories
+GET {{baseUrl}}/products/categories
+Authorization: Bearer {{adminToken}}
+
+###
+
+### 7. PERMISSION TESTS
+
+# Test access without permission (should fail)
+GET {{baseUrl}}/users
 Authorization: Bearer {{userToken}}
 
-### Teste de Acesso Negado - Módulo de Usuários (Administrador)
-GET http://localhost:3000/usuarios
-Authorization: Bearer {{adminToken}}
+###
 
-### Revogar Permissão
-POST http://localhost:3000/permissions/revogar
-Authorization: Bearer {{authToken}}
+# Test access with permission (should succeed)
+GET {{baseUrl}}/profile
+Authorization: Bearer {{userToken}}
+
+###
+
+### 8. ACCESS LOGGING TESTS
+
+# All requests above will automatically log access attempts
+# Check database for access records
+
+### 9. ERROR HANDLING TESTS
+
+# Test invalid token
+GET {{baseUrl}}/profile
+Authorization: Bearer invalid_token
+
+###
+
+# Test expired token
+GET {{baseUrl}}/profile
+Authorization: Bearer expired_token
+
+###
+
+### 10. PASSWORD ENCRYPTION TEST
+
+# Create user with encrypted password
+POST {{baseUrl}}/users
+Authorization: Bearer {{superuserToken}}
 Content-Type: application/json
 
 {
-  "usuarioId": 2,
-  "moduloId": 3
+  "nome": "Test User",
+  "email": "test@example.com",
+  "senha": "encrypted_password_123",
+  "papel": "usuario"
 }
 
-### Deletar Usuário (Apenas Superusuário)
-DELETE http://localhost:3000/usuarios/2
-Authorization: Bearer {{authToken}}
+###
 
-### Teste de Acesso Negado - Deletar Usuário (Administrador)
-DELETE http://localhost:3000/usuarios/3
+### 11. IMAGE UPLOAD TEST (if implemented)
+
+# Upload avatar
+POST {{baseUrl}}/profile/avatar
+Authorization: Bearer {{userToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="avatar"; filename="avatar.jpg"
+Content-Type: image/jpeg
+
+< ./avatar.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+### 12. COMPREHENSIVE MODULE TEST
+
+# Test all modules with different user roles
+# Superuser should have access to everything
+# Administrator should have access to everything except user management
+# Common user should only have access to profile and explicitly granted permissions
+
+# Superuser accessing all modules
+GET {{baseUrl}}/users
+Authorization: Bearer {{superuserToken}}
+
+###
+
+GET {{baseUrl}}/financial
+Authorization: Bearer {{superuserToken}}
+
+###
+
+GET {{baseUrl}}/reports
+Authorization: Bearer {{superuserToken}}
+
+###
+
+GET {{baseUrl}}/products
+Authorization: Bearer {{superuserToken}}
+
+###
+
+# Administrator accessing modules (should fail on users)
+GET {{baseUrl}}/users
 Authorization: Bearer {{adminToken}}
+
+###
+
+GET {{baseUrl}}/financial
+Authorization: Bearer {{adminToken}}
+
+###
+
+GET {{baseUrl}}/reports
+Authorization: Bearer {{adminToken}}
+
+###
+
+GET {{baseUrl}}/products
+Authorization: Bearer {{adminToken}}
+
+###
+
+# Common user accessing modules (should only work on profile)
+GET {{baseUrl}}/users
+Authorization: Bearer {{userToken}}
+
+###
+
+GET {{baseUrl}}/financial
+Authorization: Bearer {{userToken}}
+
+###
+
+GET {{baseUrl}}/reports
+Authorization: Bearer {{userToken}}
+
+###
+
+GET {{baseUrl}}/products
+Authorization: Bearer {{userToken}}
+
+###
+
+GET {{baseUrl}}/profile
+Authorization: Bearer {{userToken}}
+
+###

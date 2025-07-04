@@ -8,14 +8,17 @@ export class GamesService {
   constructor(private prisma: PrismaService) {}
 
   create(createGameDto: CreateGameDto) {
+    // TODO: Implement when game model is added to schema
     // Transformando a string (yyyy-mm-dd) de data em objeto Date
-    createGameDto.releaseDate = new Date(createGameDto.releaseDate);
-    return this.prisma.game.create({ data: createGameDto });
+    // createGameDto.releaseDate = new Date(createGameDto.releaseDate);
+    // return this.prisma.game.create({ data: createGameDto });
+    return { message: 'Game creation not implemented yet' };
   }
 
   // SERA PAGINADO
   findAll() {
-    return this.prisma.game.findMany();
+    // return this.prisma.game.findMany();
+    return { message: 'Game listing not implemented yet' };
   }
 
   findOne(id: number) {
