@@ -1,0 +1,20 @@
+### Login do Superusuário
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "jaime@teste.com",
+  "senha": "123456"
+}
+
+### Criar novo usuário (autorizado)
+POST http://localhost:3000/usuarios
+Content-Type: application/json
+Authorization: Bearer SEU_TOKEN_AQUI
+
+{
+  "nome": "João Teste",
+  "email": "joao@teste.com",
+  "senha": "123456",
+  "papel": "USUARIO"
+}
