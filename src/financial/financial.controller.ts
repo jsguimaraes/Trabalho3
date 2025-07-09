@@ -11,7 +11,7 @@ export class FinancialController {
     return {
       message: 'Financial Module - Access Granted',
       user: req.user.nome,
-      role: req.user.papel,
+      role: req.user.role,
       date: new Date().toISOString(),
       data: {
         balance: 15000.00,

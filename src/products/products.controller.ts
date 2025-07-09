@@ -11,7 +11,7 @@ export class ProductsController {
     return {
       message: 'Products Module - Access Granted',
       user: req.user.nome,
-      role: req.user.papel,
+      role: req.user.role,
       date: new Date().toISOString(),
       products: [
         { id: 1, name: 'Product A', price: 100.00, stock: 50, category: 'Electronics' },

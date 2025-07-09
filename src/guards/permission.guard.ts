@@ -55,36 +55,41 @@ export class PermissionGuard implements CanActivate {
       return true;
     }
 
-    // Admins have access to everything except user management
-    if (role === 'admin') {
-      if (module === 'users') {
-        return false;
-      }
+    // Profile module is always accessible by the user themselves
+    if (module === 'profile') {
       return true;
     }
 
-    // Common users need explicit permission
-    if (role === 'user') {
-      // Profile module is always accessible by the user themselves
-      if (module === 'profile') {
-        return true;
-      }
-
-      // Check explicit permission in database
-      const permission = await this.prisma.permission.findFirst({
-        where: {
-          userId: userId,
-          module: {
-            name: module
-          },
-          active: true
+    // Check explicit permission in database for all roles except superuser
+    const permission = await this.prisma.permission.findFirst({
+      where: {
+        userId: userId,
+        module: {
+          name: module
         },
-        include: {
-          module: true
-        }
-      });
+        active: true
+      },
+      include: {
+        module: true
+      }
+    });
 
-      return !!permission;
+    // If permission exists, allow access
+    if (permission) {
+      return true;
+    }
+
+    // For admin role, allow access to most modules except users (unless explicit permission)
+    if (role === 'admin') {
+      if (module === 'users') {
+        return false; // Admin needs explicit permission for users module
+      }
+      return true; // Admin has access to other modules by default
+    }
+
+    // For user role, only allow if explicit permission exists
+    if (role === 'user') {
+      return false; // User needs explicit permission for all modules except profile
     }
 
     return false;

@@ -25,31 +25,31 @@ let UsersController = class UsersController {
     }
     async createUser(req, body) {
         const solicitante = req.user;
-        if (body.papel === 'administrador' && solicitante.papel !== 'superusuario') {
+        if (body.role === 'admin' && solicitante.role !== 'superuser') {
             throw new common_1.ForbiddenException('Apenas superusuário pode criar administradores.');
         }
-        if (body.papel === 'usuario' && !['superusuario', 'administrador'].includes(solicitante.papel)) {
+        if (body.role === 'user' && !['superuser', 'admin'].includes(solicitante.role)) {
             throw new common_1.ForbiddenException('Apenas superusuário e administradores podem criar usuários.');
         }
         return this.usersService.createUser(body);
     }
     async createAdmin(req, body) {
         const solicitante = req.user;
-        if (solicitante.papel !== 'superusuario') {
+        if (solicitante.role !== 'superuser') {
             throw new common_1.ForbiddenException('Apenas superusuário pode criar administradores.');
         }
         return this.usersService.createAdmin(body);
     }
     async createRegularUser(req, body) {
         const solicitante = req.user;
-        if (!['superusuario', 'administrador'].includes(solicitante.papel)) {
+        if (!['superuser', 'admin'].includes(solicitante.role)) {
             throw new common_1.ForbiddenException('Apenas superusuário e administradores podem criar usuários.');
         }
         return this.usersService.createRegularUser(body);
     }
     async findAll(req) {
         const solicitante = req.user;
-        if (!['superusuario', 'administrador'].includes(solicitante.papel)) {
+        if (!['superuser', 'admin'].includes(solicitante.role)) {
             throw new common_1.ForbiddenException('Apenas superusuário e administradores podem listar usuários.');
         }
         return this.usersService.findAll();
@@ -60,7 +60,7 @@ let UsersController = class UsersController {
         if (solicitante.id === usuarioId) {
             return this.usersService.findOne(usuarioId);
         }
-        if (!['superusuario', 'administrador'].includes(solicitante.papel)) {
+        if (!['superuser', 'admin'].includes(solicitante.role)) {
             throw new common_1.ForbiddenException('Apenas superusuário e administradores podem visualizar outros usuários.');
         }
         return this.usersService.findOne(usuarioId);
@@ -71,7 +71,7 @@ let UsersController = class UsersController {
         if (solicitante.id === usuarioId) {
             return this.usersService.update(usuarioId, updateUserDto);
         }
-        if (!['superusuario', 'administrador'].includes(solicitante.papel)) {
+        if (!['superuser', 'admin'].includes(solicitante.role)) {
             throw new common_1.ForbiddenException('Apenas superusuário e administradores podem atualizar outros usuários.');
         }
         return this.usersService.update(usuarioId, updateUserDto);
@@ -82,7 +82,7 @@ let UsersController = class UsersController {
         if (solicitante.id === usuarioId) {
             throw new common_1.ForbiddenException('Usuário não pode deletar a si mesmo.');
         }
-        if (solicitante.papel !== 'superusuario') {
+        if (solicitante.role !== 'superuser') {
             throw new common_1.ForbiddenException('Apenas superusuário pode deletar usuários.');
         }
         return this.usersService.remove(usuarioId);

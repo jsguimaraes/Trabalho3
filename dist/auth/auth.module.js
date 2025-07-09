@@ -23,7 +23,7 @@ exports.AuthModule = AuthModule = __decorate([
         imports: [
             passport_1.PassportModule,
             jwt_1.JwtModule.register({
-                secret: 'your-secret-key',
+                secret: 'segredo123',
                 signOptions: { expiresIn: '1h' },
             }),
             users_module_1.UsersModule,

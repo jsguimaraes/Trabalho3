@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma.service';
 export class PermissionsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async grantPermission(userId: number, moduleId: number, loggedUser: any) {
+  async grantPermission(userId: number, moduleName: string, loggedUser: any) {
     // Verificar se o usuário logado pode conceder permissões
     if (!['superuser', 'admin'].includes(loggedUser.role)) {
       throw new ForbiddenException('Only superusers and admins can grant permissions');
@@ -22,7 +22,7 @@ export class PermissionsService {
 
     // Verificar se o módulo existe
     const module = await this.prisma.module.findUnique({
-      where: { id: moduleId }
+      where: { name: moduleName }
     });
 
     if (!module) {
@@ -34,7 +34,7 @@ export class PermissionsService {
       where: {
         userId_moduleId: {
           userId,
-          moduleId
+          moduleId: module.id
         }
       },
       update: {
@@ -42,7 +42,7 @@ export class PermissionsService {
       },
       create: {
         userId,
-        moduleId,
+        moduleId: module.id,
         active: true
       }
     });
@@ -50,17 +50,26 @@ export class PermissionsService {
     return permission;
   }
 
-  async revokePermission(userId: number, moduleId: number, loggedUser: any) {
+  async revokePermission(userId: number, moduleName: string, loggedUser: any) {
     // Verificar se o usuário logado pode revogar permissões
     if (!['superuser', 'admin'].includes(loggedUser.role)) {
       throw new ForbiddenException('Only superusers and admins can revoke permissions');
+    }
+
+    // Verificar se o módulo existe
+    const module = await this.prisma.module.findUnique({
+      where: { name: moduleName }
+    });
+
+    if (!module) {
+      throw new NotFoundException('Module not found');
     }
 
     const permission = await this.prisma.permission.findUnique({
       where: {
         userId_moduleId: {
           userId,
-          moduleId
+          moduleId: module.id
         }
       }
     });

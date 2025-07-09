@@ -14,7 +14,7 @@ export class PermissionsController {
   ) {
     return await this.permissionsService.grantPermission(
       body.userId,
-      body.moduleId,
+      body.module,
       req.user
     );
   }
@@ -26,7 +26,7 @@ export class PermissionsController {
   ) {
     return await this.permissionsService.revokePermission(
       body.userId,
-      body.moduleId,
+      body.module,
       req.user
     );
   }

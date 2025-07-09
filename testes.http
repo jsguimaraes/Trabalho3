@@ -4,76 +4,98 @@
 @baseUrl = http://localhost:3000
 
 # Token variables (replace with actual tokens after login)
-@superuserToken = your_superuser_token_here
-@adminToken = your_admin_token_here
+@superuserToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHNpc3RlbWEuY29tIiwic3ViIjoxLCJyb2xlIjoic3VwZXJ1c2VyIiwiaWF0IjoxNzUyMDk4NTgzLCJleHAiOjE3NTIxMDIxODN9.87tXE9HakiId6Y9IbxQzBt10p_Rtnd-XJ8JFWpNEvos
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsInN1YiI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzUyMDk4NjY3LCJleHAiOjE3NTIxMDIyNjd9.awpQWiwUJuE3UWouiUne5gTjDhxGynWl2331QTMGp1c
 @userToken = your_user_token_here
 
-### 1. AUTHENTICATION TESTS
+### 1. autenticação e login
 
-# Login as Superuser
+# Login como Superuser
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
   "email": "admin@sistema.com",
-  "senha": "admin123"
+  "password": "admin123"
 }
 
 ###
 
-# Login as Administrator
+# Login como Administrador
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "gerente@example.com",
-  "senha": "gerente123"
+  "email": "admin@email.com",
+  "password": "senhaAdmin"
 }
 
 ###
 
-# Login as Common User
+# Login como Usuário Comum
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
   "email": "usuario@example.com",
-  "senha": "usuario123"
+  "password": "usuario123"
 }
 
 ###
 
-### 2. USER MANAGEMENT TESTS (Superuser only)
+### 2. TESTES DE GESTÃO DE USUÁRIOS (Apenas Superusuário)
 
-# Get all users
+# Obter todos os usuários
 GET {{baseUrl}}/users
 Authorization: Bearer {{superuserToken}}
 
 ###
 
-# Create new user
+# Criar novo usuário
 POST {{baseUrl}}/users
-Authorization: Bearer {{superuserToken}}
+Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-  "nome": "New User",
+  "name": "New User",
   "email": "newuser@example.com",
-  "senha": "newpass123",
-  "papel": "usuario"
+  "password": "newpass123",
+  "role": "user"
 }
 
 ###
 
-### 3. PROFILE MODULE TESTS
+# Criar novo administrador
+POST {{baseUrl}}/users/admin
+Authorization: Bearer {{superuserToken}}
+Content-Type: application/json
 
-# Get user profile
+{
+  "name": "Novo Administrador",
+  "email": "admin@email.com",
+  "password": "senhaAdmin"
+}
+
+###
+POST {{baseUrl}}/users/admin
+Authorization: Bearer {{superuserToken}}
+Content-Type: application/json
+
+{
+  "name": "Novo Administrador",
+  "email": "admin3@email.com",
+  "password": "senhaAdmin"
+}
+
+### 3. TESTES DO MÓDULO DE PERFIL
+
+# Obter perfil do usuário
 GET {{baseUrl}}/profile
 Authorization: Bearer {{userToken}}
 
 ###
 
-# Update profile
+# Atualizar perfil do usuário
 PUT {{baseUrl}}/profile
 Authorization: Bearer {{userToken}}
 Content-Type: application/json
@@ -85,21 +107,24 @@ Content-Type: application/json
 
 ###
 
-# Get profile permissions
+# Obter permissões do perfil
 GET {{baseUrl}}/profile/permissions
 Authorization: Bearer {{userToken}}
 
 ###
 
-### 4. FINANCIAL MODULE TESTS
+GET {{baseUrl}}/permissions/user/2
+Authorization: Bearer {{superuserToken}}
 
-# Get financial data
+### 4. TESTES DO MÓDULO FINANCEIRO
+
+# Obter dados financeiros
 GET {{baseUrl}}/financial
 Authorization: Bearer {{adminToken}}
 
 ###
 
-# Create transaction
+# Criar transação
 POST {{baseUrl}}/financial/transaction
 Authorization: Bearer {{adminToken}}
 Content-Type: application/json
@@ -112,21 +137,21 @@ Content-Type: application/json
 
 ###
 
-# Get financial report
+# Obter relatório financeiro
 GET {{baseUrl}}/financial/report
 Authorization: Bearer {{adminToken}}
 
 ###
 
-### 5. REPORTS MODULE TESTS
+### 5. TESTES DO MÓDULO DE RELATÓRIOS
 
-# Get all reports
+# Obter todos os relatórios
 GET {{baseUrl}}/reports
 Authorization: Bearer {{adminToken}}
 
 ###
 
-# Generate new report
+# Gerar novo relatório
 POST {{baseUrl}}/reports/generate
 Authorization: Bearer {{adminToken}}
 Content-Type: application/json
@@ -138,21 +163,21 @@ Content-Type: application/json
 
 ###
 
-# Get sales report
+# Obter relatório de vendas
 GET {{baseUrl}}/reports/sales
 Authorization: Bearer {{adminToken}}
 
 ###
 
-### 6. PRODUCTS MODULE TESTS
+### 6. TESTES DO MÓDULO DE PRODUTOS
 
-# Get all products
+# Obter todos os produtos
 GET {{baseUrl}}/products
 Authorization: Bearer {{adminToken}}
 
 ###
 
-# Create new product
+# Criar novo produto
 POST {{baseUrl}}/products
 Authorization: Bearer {{adminToken}}
 Content-Type: application/json
@@ -166,7 +191,7 @@ Content-Type: application/json
 
 ###
 
-# Update product
+# Atualizar produto
 PUT {{baseUrl}}/products/1
 Authorization: Bearer {{adminToken}}
 Content-Type: application/json
@@ -180,91 +205,75 @@ Content-Type: application/json
 
 ###
 
-# Delete product
+# Excluir produto
 DELETE {{baseUrl}}/products/1
 Authorization: Bearer {{adminToken}}
 
 ###
 
-# Get product categories
+# Obter categorias de produtos
 GET {{baseUrl}}/products/categories
 Authorization: Bearer {{adminToken}}
 
 ###
 
-### 7. PERMISSION TESTS
+### 7. TESTES DE PERMISSÕES
 
-# Test access without permission (should fail)
+# Testar acesso sem permissão (deve falhar)
 GET {{baseUrl}}/users
 Authorization: Bearer {{userToken}}
 
 ###
 
-# Test access with permission (should succeed)
+# Testar acesso com permissão (deve ter sucesso)
 GET {{baseUrl}}/profile
 Authorization: Bearer {{userToken}}
 
 ###
 
-### 8. ACCESS LOGGING TESTS
+### 8. TESTES DE REGISTRO DE ACESSO
 
-# All requests above will automatically log access attempts
-# Check database for access records
+# Todas as requisições acima registrarão automaticamente as tentativas de acesso
+# Verifique o banco de dados para registros de acesso
 
-### 9. ERROR HANDLING TESTS
+### 9. TESTES DE MANIPULAÇÃO DE ERROS
 
-# Test invalid token
+# Testar token inválido
 GET {{baseUrl}}/profile
 Authorization: Bearer invalid_token
 
 ###
 
-# Test expired token
+# Testar token expirado
 GET {{baseUrl}}/profile
 Authorization: Bearer expired_token
 
 ###
 
-### 10. PASSWORD ENCRYPTION TEST
+### 10. TESTES DE CRIPTOGRAFIA DE SENHAS
 
-# Create user with encrypted password
+# Criar usuário com senha criptografada
 POST {{baseUrl}}/users
 Authorization: Bearer {{superuserToken}}
 Content-Type: application/json
 
 {
-  "nome": "Test User",
+  "name": "Test User",
   "email": "test@example.com",
-  "senha": "encrypted_password_123",
-  "papel": "usuario"
+  "password": "encrypted_password_123",
+  "role": "usuario"
 }
 
-###
 
-### 11. IMAGE UPLOAD TEST (if implemented)
 
-# Upload avatar
-POST {{baseUrl}}/profile/avatar
-Authorization: Bearer {{userToken}}
-Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+### 12. TESTES ABRANGENTES DO MÓDULO
 
-------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="avatar"; filename="avatar.jpg"
-Content-Type: image/jpeg
+# Testar todos os módulos com diferentes papéis de usuário
+# Superusuário deve ter acesso a tudo
+# O administrador deve ter acesso a tudo, exceto ao gerenciamento de usuários
+# O usuário comum deve ter acesso apenas ao perfil e permissões explicitamente concedidas
 
-< ./avatar.jpg
-------WebKitFormBoundary7MA4YWxkTrZu0gW--
-
-###
-
-### 12. COMPREHENSIVE MODULE TEST
-
-# Test all modules with different user roles
-# Superuser should have access to everything
-# Administrator should have access to everything except user management
-# Common user should only have access to profile and explicitly granted permissions
-
-# Superuser accessing all modules
+# Superusuário acessando todos os módulos
 GET {{baseUrl}}/users
 Authorization: Bearer {{superuserToken}}
 
@@ -285,7 +294,7 @@ Authorization: Bearer {{superuserToken}}
 
 ###
 
-# Administrator accessing modules (should fail on users)
+# Administrador acessando módulos (deve falhar nos usuários)
 GET {{baseUrl}}/users
 Authorization: Bearer {{adminToken}}
 
@@ -306,7 +315,7 @@ Authorization: Bearer {{adminToken}}
 
 ###
 
-# Common user accessing modules (should only work on profile)
+# Módulos de acesso de usuário comum (deve funcionar apenas no perfil)
 GET {{baseUrl}}/users
 Authorization: Bearer {{userToken}}
 
@@ -331,3 +340,42 @@ GET {{baseUrl}}/profile
 Authorization: Bearer {{userToken}}
 
 ###
+
+# Criar novo módulo
+POST {{baseUrl}}/modules
+Authorization: Bearer {{superuserToken}}
+Content-Type: application/json
+
+{
+  "name": "games",
+  "description": "Games Module",
+  "active": true
+}
+
+###
+
+# Registrar acesso
+POST {{baseUrl}}/accesses
+Authorization: Bearer {{superuserToken}}
+Content-Type: application/json
+
+{
+  "userId": 2,
+  "module": "games",
+  "route": "/games",
+  "permitted": true,
+  "ip": "127.0.0.1",
+  "userAgent": "Mozilla/5.0"
+}
+
+###
+
+# Conceder permissão de acesso a um módulo para um usuário
+POST {{baseUrl}}/permissions/grant
+Authorization: Bearer {{superuserToken}}
+Content-Type: application/json
+
+{
+  "userId": 2,
+  "module": "users"
+}

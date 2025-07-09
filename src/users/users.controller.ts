@@ -26,12 +26,12 @@ export class UsersController {
     const solicitante = req.user;
 
     // Apenas superusuário pode criar administradores
-    if (body.papel === 'administrador' && solicitante.papel !== 'superusuario') {
+    if (body.role === 'admin' && solicitante.role !== 'superuser') {
       throw new ForbiddenException('Apenas superusuário pode criar administradores.');
     }
 
     // Superusuário e administradores podem criar usuários comuns
-    if (body.papel === 'usuario' && !['superusuario', 'administrador'].includes(solicitante.papel)) {
+    if (body.role === 'user' && !['superuser', 'admin'].includes(solicitante.role)) {
       throw new ForbiddenException('Apenas superusuário e administradores podem criar usuários.');
     }
 
@@ -42,7 +42,7 @@ export class UsersController {
   async createAdmin(@Request() req, @Body() body: any) {
     const solicitante = req.user;
 
-    if (solicitante.papel !== 'superusuario') {
+    if (solicitante.role !== 'superuser') {
       throw new ForbiddenException('Apenas superusuário pode criar administradores.');
     }
 
@@ -53,7 +53,7 @@ export class UsersController {
   async createRegularUser(@Request() req, @Body() body: any) {
     const solicitante = req.user;
 
-    if (!['superusuario', 'administrador'].includes(solicitante.papel)) {
+    if (!['superuser', 'admin'].includes(solicitante.role)) {
       throw new ForbiddenException('Apenas superusuário e administradores podem criar usuários.');
     }
 
@@ -65,7 +65,7 @@ export class UsersController {
     const solicitante = req.user;
 
     // Apenas superusuário e administradores podem listar usuários
-    if (!['superusuario', 'administrador'].includes(solicitante.papel)) {
+    if (!['superuser', 'admin'].includes(solicitante.role)) {
       throw new ForbiddenException('Apenas superusuário e administradores podem listar usuários.');
     }
 
@@ -83,7 +83,7 @@ export class UsersController {
     }
 
     // Apenas superusuário e administradores podem ver outros usuários
-    if (!['superusuario', 'administrador'].includes(solicitante.papel)) {
+    if (!['superuser', 'admin'].includes(solicitante.role)) {
       throw new ForbiddenException('Apenas superusuário e administradores podem visualizar outros usuários.');
     }
 
@@ -101,7 +101,7 @@ export class UsersController {
     }
 
     // Apenas superusuário e administradores podem atualizar outros usuários
-    if (!['superusuario', 'administrador'].includes(solicitante.papel)) {
+    if (!['superuser', 'admin'].includes(solicitante.role)) {
       throw new ForbiddenException('Apenas superusuário e administradores podem atualizar outros usuários.');
     }
 
@@ -119,7 +119,7 @@ export class UsersController {
     }
 
     // Apenas superusuário pode deletar usuários
-    if (solicitante.papel !== 'superusuario') {
+    if (solicitante.role !== 'superuser') {
       throw new ForbiddenException('Apenas superusuário pode deletar usuários.');
     }
 
