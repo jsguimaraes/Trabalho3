@@ -4,9 +4,9 @@
 @baseUrl = http://localhost:3000
 
 # Token variables (replace with actual tokens after login)
-@superuserToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHNpc3RlbWEuY29tIiwic3ViIjoxLCJyb2xlIjoic3VwZXJ1c2VyIiwiaWF0IjoxNzUyMDk4NTgzLCJleHAiOjE3NTIxMDIxODN9.87tXE9HakiId6Y9IbxQzBt10p_Rtnd-XJ8JFWpNEvos
-@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsInN1YiI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzUyMDk4NjY3LCJleHAiOjE3NTIxMDIyNjd9.awpQWiwUJuE3UWouiUne5gTjDhxGynWl2331QTMGp1c
-@userToken = your_user_token_here
+@superuserToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHNpc3RlbWEuY29tIiwic3ViIjoxLCJyb2xlIjoic3VwZXJ1c2VyIiwiaWF0IjoxNzUyMDk5ODU3LCJleHAiOjE3NTIxMDM0NTd9.P6Oaa_A2R2oIcOdZZ099kbdzx4lOPC8z26DZdzl3VhU
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsInN1YiI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzUyMDk5ODkzLCJleHAiOjE3NTIxMDM0OTN9.2YhsFpnaTVAn9bp2ro_Kf6r-auzD6O9JcrSVubJITNY
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld3VzZXJAZXhhbXBsZS5jb20iLCJzdWIiOjMsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzUyMTAwNDc2LCJleHAiOjE3NTIxMDQwNzZ9._R6XMLsALxWudWKaKHcJcpUNeDUCxJiM87_k4Nyo7b8
 
 ### 1. autenticação e login
 
@@ -37,8 +37,8 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "usuario@example.com",
-  "password": "usuario123"
+  "email": "newuser@example.com",
+  "password": "newpass123"
 }
 
 ###
